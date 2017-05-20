@@ -2,6 +2,12 @@
 
 These are the base dotfiles that I start with when I set up a new environment. 
 
+## Installation
+```
+git clone https://github.com/iHarshad/dotfiles.git ~/.dotfiles/
+cd ~/.dotfiles/
+sh install.sh
+```
 
 ## License
 
