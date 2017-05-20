@@ -1,0 +1,142 @@
+PS_LINE=`printf -- '- %.0s' {1..200}`
+
+# PS_FILL=${PS_LINE:0:$COLUMNS}
+
+function vcs_prompt {
+  PS_FILL=${PS_LINE:0:$COLUMNS}
+  if [ -d .git ]; then
+    ref=$(git symbolic-ref HEAD 2> /dev/null)
+    PS_VCS_SERVICE="git"
+    PS_VCS_BRANCH="${ref#refs/heads/}"
+  elif [ -d .svn ]; then
+    PS_VCS_SERVICE="svn"
+    PS_VCS_BRANCH="$(svn info|awk '/Revision/{print $2}')"
+  elif [ -d .hg ]; then
+    PS_VCS_SERVICE="hg"
+    PS_VCS_BRANCH="$(hg branch)"
+  elif [ -f _FOSSIL_ -o -f .fslckout ]; then
+    PS_VCS_SERVICE="fossil"
+    PS_VCS_BRANCH="$(fossil status|awk '/tags/{print $2}')"
+  else
+    PS_VCS_SERVICE=''
+    PS_VCS_BRANCH=''
+  fi
+}
+
+
+# PS_BRANCH="$D_YELLOW\$PS_VCS_SERVICE $YELLOW\$PS_VCS_BRANCH"
+# PS_BRANCH_SIZE="\${#PS_VCS_SERVICE}-\${#PS_VCS_BRANCH}"
+# # Move cursor to absolute column position -> \[\033[50G\] moves cursor to 50th column
+# PS_VCS="\[\033[\$((COLUMNS-1-$PS_BRANCH_SIZE))G\] $YELLOW$PS_BRANCH"
+
+# PS_INFO="$GREEN\u@\h$RESET:$BLUE\w"
+# # Print the horizontal line first and then overwrite it with text
+# export PS1="\n${PS_FILL}\[\033[0G\][${venv}-${PYTHON_VIRTUALENV}]${PS_INFO} $YELLOW(${PS_BRANCH})${PS_VCS} ${venv}\n${RESET}  ❯ "
+
+
+
+
+
+
+
+# Prompt symbols
+function prompt_symbols () {
+  echo " Prompt Symbols"
+  echo " ❯ ▶ ⚡ ☠ 💀 ❄ ☯ ♞ ★ ❤ ✌ ☕ ☘ ☢ ☣ ☮ ♠ 👉 🔰 ✪ "
+  echo " ➤  ⭐ ☀ ✹ ☄ ♆ ♀ λ Δ Ω μ Θ ♇ ♚ ♛ ♜ ♝ ♟ ♠ ♣ ⚢ "
+  echo " ✈︎ ↳ ⚲ ⚳ ⚴ ⚦ ⚒ ⚑ ⚐ ♺ ♻ ♼ ☰ ☱ ☲ ☳ ☴ ☵ ☶ ☷"
+  echo " ✡ ✔ ✖ ✚ ✱ ✤ ✦ ❤ ➜ ➟ ➼ ✂ ✎ ✐ ⨀ ⨁ ⨂ ⨍ ⨎ ⨏ ⨷ ⩚ ⩛ ⩡ ⩱ ⩲ ⩵  ⩶ ⨠ "
+  echo " ⬅ ⬆ ⬇ ⬈ ⬉ ⬊ ⬋ ⬒ ⬓ ⬔ ⬕ ⬖ ⬗ ⬘ ⬙ ⬟  ⬤ 〒 ǀ ǁ ǂ ĭ Ť Ŧ"
+}
+
+
+
+
+
+
+
+
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+
+
+
+
+
+
+
+
+# bash_prompt
+
+
+# Detect whether the current directory is a git repository.
+function is_git_repository {
+  git branch > /dev/null 2>&1
+}
+
+function set_git_branch {
+  # Set the final branch string
+  BRANCH=`parse_git_branch`
+  local TIME=`fmt_time` # format time for prompt string
+}
+
+function parse_git_branch() {
+  git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e "s/* \(.*\)/\1$(parse_git_dirty)/"
+}
+
+function parse_git_dirty() {
+  [[ $(git status 2> /dev/null | tail -n1) != *"working directory clean"* ]] && echo "*"
+}
+
+function fmt_time () { #format time just the way I likes it
+  if [ `date +%p` = "PM" ]; then
+    meridiem="pm"
+  else
+    meridiem="am"
+  fi
+  date +"%l:%M:%S$meridiem"|sed 's/ //g'
+}
+
+# Return the prompt symbol to use, colorized based on the return value of the
+# previous command.
+function set_prompt_symbol () {
+  if test $1 -eq 0 ; then
+    PROMPT_SYMBOL=" ❯ "
+  else
+    PROMPT_SYMBOL="${LIGHT_RED} ❯ ${COLOR_NONE}"
+  fi
+}
+
+# Determine active Python virtualenv details.
+function set_virtualenv () {
+  if test -z "$VIRTUAL_ENV" ; then
+    PYTHON_VIRTUALENV=""
+  else
+    PYTHON_VIRTUALENV="${BLUE}[`basename \"$VIRTUAL_ENV\"`]${COLOR_NONE} "
+  fi
+}
+
+# Set the full bash prompt.
+function set_bash_prompt () {
+  # Set the PROMPT_SYMBOL variable. We do this first so we don't lose the
+  # return value of the last command.
+  set_prompt_symbol $?
+
+  # Set the PYTHON_VIRTUALENV variable.
+  set_virtualenv
+
+  # Set the BRANCH variable.
+  if is_git_repository ; then
+    set_git_branch
+  else
+    BRANCH=''
+  fi
+
+  # Set the bash prompt variable.
+  #  PS1="\n${PS_FILL}${PYTHON_VIRTUALENV}${YELLOW}\w${COLOR_NONE} ${BRANCH}\n${PROMPT_SYMBOL} "
+   PS1="\n${PS_FILL}${PYTHON_VIRTUALENV}${YELLOW}\w${COLOR_NONE} $PS_VCS_SERVICE $PS_VCS_BRANCH \n${PROMPT_SYMBOL} "
+}
+
+ # Tell bash to execute this function just before displaying its prompt.
+ PROMPT_COMMAND=set_bash_prompt
