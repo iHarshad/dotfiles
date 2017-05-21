@@ -15,3 +15,4 @@ ln -s ${BASEDIR}/bash_exports ~/.bash_exports
 ln -s ${BASEDIR}/bash_functions ~/.bash_functions
 ln -s ${BASEDIR}/extra ~/.extra
 ln -s ${BASEDIR}/bash_prompt ~/.bash_prompt
+ln -s ${BASEDIR}/bash_profile ~/.bash_profile
