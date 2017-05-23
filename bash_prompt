@@ -6,17 +6,17 @@ function vcs_prompt {
   PS_FILL=${PS_LINE:0:$COLUMNS}
   if [ -d .git ]; then
     ref=$(git symbolic-ref HEAD 2> /dev/null)
-    PS_VCS_SERVICE="git"
-    PS_VCS_BRANCH="${ref#refs/heads/}"
+    PS_VCS_SERVICE="(git"
+    PS_VCS_BRANCH="${ref#refs/heads/})"
   elif [ -d .svn ]; then
-    PS_VCS_SERVICE="svn"
-    PS_VCS_BRANCH="$(svn info|awk '/Revision/{print $2}')"
+    PS_VCS_SERVICE="(svn"
+    PS_VCS_BRANCH="$(svn info|awk '/Revision/{print $2}'))"
   elif [ -d .hg ]; then
-    PS_VCS_SERVICE="hg"
-    PS_VCS_BRANCH="$(hg branch)"
+    PS_VCS_SERVICE="(hg"
+    PS_VCS_BRANCH="$(hg branch))"
   elif [ -f _FOSSIL_ -o -f .fslckout ]; then
-    PS_VCS_SERVICE="fossil"
-    PS_VCS_BRANCH="$(fossil status|awk '/tags/{print $2}')"
+    PS_VCS_SERVICE="(fossil"
+    PS_VCS_BRANCH="$(fossil status|awk '/tags/{print $2}'))"
   else
     PS_VCS_SERVICE=''
     PS_VCS_BRANCH=''
@@ -127,15 +127,17 @@ function set_bash_prompt () {
   set_virtualenv
 
   # Set the BRANCH variable.
-  if is_git_repository ; then
-    set_git_branch
-  else
-    BRANCH=''
-  fi
+  # if is_git_repository ; then
+  #   set_git_branch
+  # else
+  #   BRANCH=''
+  # fi
+
+  vcs_prompt
 
   # Set the bash prompt variable.
   #  PS1="\n${PS_FILL}${PYTHON_VIRTUALENV}${YELLOW}\w${COLOR_NONE} ${BRANCH}\n${PROMPT_SYMBOL} "
-   PS1="\n${PS_FILL}${PYTHON_VIRTUALENV}${YELLOW}\w${COLOR_NONE} $PS_VCS_SERVICE $PS_VCS_BRANCH \n${PROMPT_SYMBOL} "
+   PS1="\n${PS_FILL}\[\033[0G\]${PYTHON_VIRTUALENV}${YELLOW}\w${RESET} $PS_VCS_SERVICE $PS_VCS_BRANCH \n${PROMPT_SYMBOL}${RESET} "
 }
 
  # Tell bash to execute this function just before displaying its prompt.
