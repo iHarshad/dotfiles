@@ -16,12 +16,12 @@ export PYTHONIOENCODING='UTF-8';
 
 # History on steroids
 #  http://unix.stackexchange.com/a/48113
-export HISTCONTROL="erasedups:ignoreboth" #ignoreboth will ignore consecutive dups and commands starting with space
+export HISTCONTROL="ignoreboth" #ignoreboth will ignore consecutive dups and commands starting with space
 # Use standard ISO 8601 timestamp
 # %F equivalent to %Y-%m-%d
 # %T equivalent to %H:%M:%S (24-hours format)
 export HISTTIMEFORMAT="%F %T "
-export HISTIGNORE="hist*:ls:pwd:gl:bash:cd:la:exit:clear:z:ll:* --help"
+export HISTIGNORE="hist*:ls:pwd:gl*:bash:cd:la:exit:clear:z:ll:* --help"
 # Increase Bash history size. Allow 32³ entries; the default is 500.
 export HISTSIZE="1000000"
 export HISTFILESIZE="1000000"
@@ -41,8 +41,3 @@ export LESS_TERMCAP_us=$'\E[04;38;5;146m' # begin underline
 
 # Don’t clear the screen after quitting a manual page.
 export MANPAGER='less -X';
-
-# Make new shells get the history lines from all previous
-# shells instead of the default "last window closed" history.
-# a-append c-clear r-read into memory
-export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
