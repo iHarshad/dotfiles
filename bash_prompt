@@ -40,7 +40,7 @@ function vcs_prompt {
 function prompt_symbols () {
   echo " Prompt Symbols"
   echo " ❯ ▶ ⚡ ☠ 💀 ❄ ☯ ♞ ★ ❤ ✌ ☕ ☘ ☢ ☣ ☮ ♠ 👉 🔰 ✪ "
-  echo " ➤  ⭐ ☀ ✹ ☄ ♆ ♀ λ Δ Ω μ Θ ♇ ♚ ♛ ♜ ♝ ♟ ♠ ♣ ⚢ "
+  echo " ➤  ⭐ ☀ ✹ ☄ ♆ ♀ λ ▲ Δ Ω μ Θ ♇ ♚ ♛ ♜ ♝ ♟ ♠ ♣ ⚢ "
   echo " ✈︎ ↳ ⚲ ⚳ ⚴ ⚦ ⚒ ⚑ ⚐ ♺ ♻ ♼ ☰ ☱ ☲ ☳ ☴ ☵ ☶ ☷"
   echo " ✡ ✔ ✖ ✚ ✱ ✤ ✦ ❤ ➜ ➟ ➼ ✂ ✎ ✐ ⨀ ⨁ ⨂ ⨍ ⨎ ⨏ ⨷ ⩚ ⩛ ⩡ ⩱ ⩲ ⩵  ⩶ ⨠ "
   echo " ⬅ ⬆ ⬇ ⬈ ⬉ ⬊ ⬋ ⬒ ⬓ ⬔ ⬕ ⬖ ⬗ ⬘ ⬙ ⬟ ⬤ 〒 ǀ ǁ ǂ ĭ Ť Ŧ"
@@ -135,16 +135,18 @@ function set_bash_prompt () {
 
   # Set the bash prompt variable.
   #  PS1="\n${PS_FILL}${PYTHON_VIRTUALENV}${YELLOW}\w${COLOR_NONE} ${BRANCH}\n${PROMPT_SYMBOL} "
-  PS1="\n$WHITE${PS_FILL}$RESET\[\033[0G\]${PYTHON_VIRTUALENV}$GREEN\u@\h$RESET:$BLUE\w${RESET}${YELLOW}$PS_VCS_SERVICE$PS_VCS_BRANCH \n${PROMPT_SYMBOL}${RESET} "
+  PS1="\n$WHITE${PS_FILL}$RESET\[\033[0G\]${PYTHON_VIRTUALENV}$GREEN\u@\h$RESET:$BLUE\w${RESET}${YELLOW}$PS_VCS_SERVICE$PS_VCS_BRANCH${RESET} \n${PROMPT_SYMBOL}${RESET}"
 }
 
 # Tell bash to execute this function just before displaying its prompt.
 PROMPT_COMMAND=set_bash_prompt
+
+# THIS SHELL HISTORY SETTING NEEDS TO BE HERE AND CALLED AFTER THE FINAL INVOCATION OF PROMPT_COMMAND
 
 # Make new shells get the history lines from all previous
 # shells instead of the default "last window closed" history.
 # a-append
 # c-clear
 # r-read into memory
-# n-tell bash to read lines that is not read from history file to current history list of session.
-export PROMPT_COMMAND="history -a; history -c; history -r; history -n; $PROMPT_COMMAND"
+# n-tell bash to read lines that is not read from history file to current history list of session. (OPTIONAL)
+export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
